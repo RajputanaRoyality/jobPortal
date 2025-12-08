@@ -1,0 +1,300 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader,
+  AlertCircle,
+  CheckCircle
+} from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import axiosInstance from '../../utils/axiosInstance.js';
+import API_PATHS from '../../utils/apiPaths.js';
+
+const Login = () => {
+  const { login } = useAuth();
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false,
+  });
+
+  const [formState, setFormState] = useState({
+    loading: false,
+    errors: {},
+    showPassword: false,
+    success: false,
+  });
+
+  const validateEmail = (email) => {
+    if (!email.trim()) return 'Email is required';
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return 'Please enter a valid email address';
+
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) return 'Password is required';
+
+    // Example rules: at least 8 chars, 1 uppercase, 1 number
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(password))
+      return 'Password must be at least 8 characters long, include 1 uppercase letter and 1 number';
+
+    return '';
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+
+    if (formState.errors[name]) {
+      setFormState((prev) => ({
+        ...prev,
+        errors: { ...prev.errors, [name]: '' },
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {
+      email: validateEmail(formData.email),
+      password: validatePassword(formData.password),
+    };
+
+    Object.keys(errors).forEach((key) => {
+      if (!errors[key]) delete errors[key];
+    });
+
+    setFormState((prev) => ({ ...prev, errors }));
+    return Object.keys(errors).length === 0; // <-- fixed Object.Keys
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setFormState((prev) => ({ ...prev, loading: true }));
+
+    try {
+      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+        email: formData.email,
+        password: formData.password,
+        rememberMe: formData.rememberMe,
+      });
+
+      const { token, user } = response.data;
+      const role = user?.role || response.data.role || 'jobseeker';
+
+      setFormState((prev) => ({
+        ...prev,
+        loading: false,
+        success: true,
+        errors: {},
+      }));
+
+      if (token) {
+        // Store user + token in context / localStorage
+        login(response.data, token);
+
+        // Redirect based on role
+        setTimeout(() => {
+          window.location.href =
+            role === 'employer' ? '/employer-dashboard' : '/find-jobs';
+        }, 2000);
+      }
+    } catch (error) {
+      setFormState((prev) => ({
+        ...prev,
+        loading: false,
+        errors: {
+          submit:
+            error.response?.data?.message ||
+            'Login failed. Please check your credentials',
+        },
+      }));
+    }
+  };
+
+  if (formState.success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center"
+        >
+          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Welcome Back!
+          </h2>
+
+          <p className="text-gray-600 mb-4">
+            You have been successfully logged in.
+          </p>
+
+          <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto" />
+
+          <p className="text-sm text-gray-500 mt-2">
+            Redirecting to your dashboard...
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full"
+      >
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h2>
+          <p className="text-gray-600">Sign in to your Vaiso account</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${formState.errors.email ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
+                placeholder="Enter your E-mail"
+              />
+            </div>
+            {formState.errors.email && (
+              <p className="text-red-500 text-sm mt-1 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1" />
+                {formState.errors.email}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type={formState.showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`w-full pl-10 pr-12 py-3 rounded-lg border ${formState.errors.password
+                  ? 'border-red-500'
+                  : 'border-gray-300'
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
+                placeholder="Enter your Password"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFormState((prev) => ({
+                    ...prev,
+                    showPassword: !prev.showPassword,
+                  }))
+                }
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {formState.showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            {formState.errors.password && (
+              <p className="text-red-500 text-sm mt-1 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-1" />
+                {formState.errors.password}
+              </p>
+            )}
+          </div>
+
+          {/* Remember Me */}
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name="rememberMe"
+                checked={formData.rememberMe}
+                onChange={handleInputChange}
+                className="h-4 w-4 text-blue-600 rounded border-gray-300"
+              />
+              <span className="text-gray-700">Remember me</span>
+            </label>
+          </div>
+
+          {/* Submit Error */}
+          {formState.errors.submit && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-red-700 text-sm flex items-center">
+                <AlertCircle className="w-4 h-4 mr-2" />
+                {formState.errors.submit}
+              </p>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={formState.loading}
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          >
+            {formState.loading ? (
+              <>
+                <Loader className="w-5 h-5 animate-spin" />
+                <span>Sign In...</span>
+              </>
+            ) : (
+              <span>Sign In</span>
+            )}
+          </button>
+
+          {/* Sign up Link */}
+          <div className="text-center">
+            <p className="text-gray-600">
+              Don't have an account?{' '}
+              <a
+                href="/signup"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Create one here
+              </a>
+            </p>
+          </div>
+        </form>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Login;
