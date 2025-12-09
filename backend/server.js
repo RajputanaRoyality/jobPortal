@@ -38,6 +38,13 @@ app.use("/api/analytics", analyticsRoutes);
 
 app.use("/api/auth", require("./routes/authRoutes"));
 
+app.get('/', (req, res) => {
+    res.send({
+        activeStatus: true,
+        error:false,
+    })
+})
+
 // Optional: centralized error handler (if you want one)
 app.use((err, req, res, next) => {
     console.error("Global error handler:", err);
