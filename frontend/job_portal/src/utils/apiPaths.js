@@ -1,4 +1,4 @@
-export const BASE_URL = "https://job-portal-backend-gilt-psi.vercel.app";
+export const BASE_URL = "https://samridhihrinitialstage.samriddhihr.com/";
 
 export const API_PATHS = {
     AUTH: {

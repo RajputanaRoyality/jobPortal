@@ -14,6 +14,8 @@ import { API_PATHS } from "../../utils/apiPaths.js"
 import DashboardLayout from '../../layout/DashboardLayout.jsx';
 import LoadingSpinner from '../../layout/LoadingSpinner.jsx';
 import ApplicantDashboard from '../../cards/ApplicantDashboard.jsx';
+import JobDashboardCard from "../../cards/JobDashboardCard.jsx"
+
 
 const Card = ({ className, title, headerAction, subtitle, children }) => {
   return <div

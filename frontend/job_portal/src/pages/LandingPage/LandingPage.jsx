@@ -7,11 +7,16 @@ import Footer from './components/Footer'
 
 const LandingPage = () => {
   return (
-    <div className='min-h-screen mb-[100vh]'>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <Hero />
-      <Features />
-      <Analytics />
+
+      {/* Main content */}
+      <main className="flex-1">
+        <Hero />
+        <Features />
+        <Analytics />
+      </main>
+
       <Footer />
     </div>
   )

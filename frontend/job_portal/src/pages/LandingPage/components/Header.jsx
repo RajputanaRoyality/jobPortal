@@ -1,11 +1,11 @@
 import React from 'react'
 import { motion } from "framer-motion"
-import { Briefcase } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
+import logo from "../../../assets/logo.png"
 
 const Header = () => {
-    const {user,isAuthenticated} = useAuth()
+    const { user, isAuthenticated } = useAuth()
     const navigate = useNavigate();
 
     return <motion.header
@@ -17,17 +17,21 @@ const Header = () => {
             <div className="flex items-center justify-between h-16">
                 {/*Logo*/}
                 <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gradiant-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                        <Briefcase className="w-5 h-5 text-white" />
+                    <div className="w-4 h-2 bg-gradiant-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+
                     </div>
-                    <span className="text-xl font-bold text-gray-900">VaisoPortal</span>
+                    <span className="text-xl font-bold text-gray-900"><img
+                        src={logo}
+                        alt="Logo"
+                        className="w-65 h-15 object-cover rounded-md cover"
+                    /></span>
                 </div>
 
                 {/*Navigation Links - Hidden on mobile*/}
                 <nav className="hidden md:flex items-center space-x-8">
                     <a
                         onClick={() => navigate("/find-jobs")}
-                        className='text-gray-600 hover:text-gray-900 transition-colors font-medium'>
+                        className='text-gray-600 hover:text-gray-900 transition-colors font-medium cursor-pointer'>
                         Find Jobs
                     </a>
                     <a
@@ -37,7 +41,7 @@ const Header = () => {
                                     ? "/employer-dashboard"
                                     : "/login"
                             );
-                        }} className='text-gray-600 hover:text-gray-900 transition-colors font-medium'>
+                        }} className='text-gray-600 hover:text-gray-900 transition-colors font-medium cursor-pointer'>
                         For Employers
                     </a>
                 </nav>

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, Children } from "react";
 import {
-    Briefcase,
     Building2,
     LogOut,
     Menu,
     X,
 } from "lucide-react";
+import logo from "../assets/logo.png"
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { NAVIGATION_MENU } from "../utils/data";
@@ -29,7 +29,7 @@ const NavigationItem = ({ item, isActive, onClick, isCollapsed }) => {
     </button>
 };
 
-const DashboardLayout = ({ activeMenu,children }) => {
+const DashboardLayout = ({ activeMenu, children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -83,10 +83,14 @@ const DashboardLayout = ({ activeMenu,children }) => {
                 <div className="flex items-center h-16 border-b border-gray-200 pl-6">
                     {!sidebarCollapsed ? (
                         <Link className="flex items-center space-x-3" to="/">
-                            <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                                <Briefcase className="h-5 w-5 text-white" />
+                            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}>
+                                <img
+                                    src={logo}
+                                    alt="Logo"
+                                    className="w-50 h-15 object-cover rounded-md"  // Adjust size as needed
+                                />
                             </div>
-                            <span className="text-gray-900 font-bold text-xl">JobPortal</span>
+                            {/* <span className="text-gray-900 font-bold text-xl">JobPortal</span> */}
                         </Link>
                     ) : (
                         <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
@@ -130,7 +134,7 @@ const DashboardLayout = ({ activeMenu,children }) => {
             {/*Main content*/}
             <div className={`flex-1 flex flex-col transition-all duration-300
                 ${isMobile ? "ml-0" : sidebarCollapsed ? "ml-16" : "ml-64"
-            }`}>
+                }`}>
                 {/*Top navbar*/}
                 <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 h-16 flex items-center justify-between px-6 sticky top-0 z-30">
                     <div className="flex items-center space-x-4">
@@ -139,9 +143,9 @@ const DashboardLayout = ({ activeMenu,children }) => {
                                 className="p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
                             >
                                 {sidebarOpen ? (
-                                    <X className="h-5 w-5 textgray-600"/>
+                                    <X className="h-5 w-5 textgray-600" />
                                 ) : (
-                                        <Menu className="h-5 w-5 textgray-600"/>
+                                    <Menu className="h-5 w-5 textgray-600" />
                                 )}
                             </button>
                         )}

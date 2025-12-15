@@ -63,43 +63,6 @@ const JobPostingForm = () => {
       return;
     };
 
-    useEffect(() => {
-      const fetchJobDetails = async () => {
-        if (jobId) {
-          try {
-            const response = await axiosInstance.get(
-              API_PATHS.JOBS.GET_JOB_BY_ID
-            );
-            const jobData = response.data;
-            if (jobData) {
-              setFormData({
-                jobTitle: jobData.title,
-                location: jobData.location,
-                category: jobData.category,
-                jobType: jobData.type,
-                description: jobData.description,
-                requirements: jobData.requirements,
-                salaryMin: jobData.salaryMin,
-                salaryMax: jobData.salaryMax,
-              })
-            }
-          } catch (error) {
-            console.error("Error fetching job details")
-            if (error.response) {
-              console.error("API Error:", error.response.data.message)
-            }
-          }
-        }
-      }
-
-      fetchJobDetails();
-
-      return () => {
-
-      }
-    },[])
-          
-
     setIsSubmitting(true);
 
     const jobPayload = {
@@ -146,7 +109,7 @@ const JobPostingForm = () => {
       console.error("Unexpected response", response);
       toast.error("Something went wrong.Please try again.")
     } catch (error) {
-      if (error.respoonse?.data?.message) {
+      if (error.response?.data?.message) {
         console.error("API Error:", error.response.data.message)
         toast.error(error.response.data.message);
       } else {
@@ -157,6 +120,43 @@ const JobPostingForm = () => {
       setIsSubmitting(false);
     }
   };
+
+
+  // useEffect(() => {
+  //   const fetchJobDetails = async () => {
+  //     if (jobId) {
+  //       try {
+  //         const response = await axiosInstance.get(
+  //           API_PATHS.JOBS.GET_JOB_BY_ID
+  //         );
+  //         const jobData = response.data;
+  //         if (jobData) {
+  //           setFormData({
+  //             jobTitle: jobData.title,
+  //             location: jobData.location,
+  //             category: jobData.category,
+  //             jobType: jobData.type,
+  //             description: jobData.description,
+  //             requirements: jobData.requirements,
+  //             salaryMin: jobData.salaryMin,
+  //             salaryMax: jobData.salaryMax,
+  //           })
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching job details")
+  //         if (error.response) {
+  //           console.error("API Error:", error.response.data.message)
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   fetchJobDetails();
+
+  //   return () => {
+
+  //   }
+  // }, [])
 
 
   //Form Validation helper
@@ -236,7 +236,7 @@ const JobPostingForm = () => {
               <InputField
                 label="Job Title"
                 id="jobTitle"
-                placeHolder="e.g., Senior Frontend Developer"
+                placeholder="e.g., Senior Frontend Developer"
                 value={formData.jobTitle}
                 onChange={(e) => handleInputChange("jobTitle", e.target.value)}
                 error={errors.jobTitle}
@@ -328,25 +328,27 @@ const JobPostingForm = () => {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                      <IndianRupee className='h-5 w-5 text-gray-400' />
+                      <IndianRupee className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
                       type="number"
-                      placeholder='Min'
+                      placeholder="Min"
                       value={formData.salaryMin}
-                      onChange={(e) => handleInputChange("SalaryMin", e.target.value)}
-                      className='w-full pl-10 pr-3 py-2.5 border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus-ring-opacity-20 focus:border-blue-500 transition-colors duration-200'
+                      onChange={(e) => handleInputChange("salaryMin", e.target.value)}
+                      className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                     />
                   </div>
+
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                      <IndianRupee className='h-5 w-5 text-gray-400' />
+                      <IndianRupee className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input type="number"
-                      placeholder='Max'
+                    <input
+                      type="number"
+                      placeholder="Max"
                       value={formData.salaryMax}
-                      onChange={(e) => handleInputChange("salaryMax", e.target, value)}
-                      className='w-full pl-10 pr-3 py-2.5 border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus-ring-opacity-20 focus:border-blue-500 transition-colors duration-200'
+                      onChange={(e) => handleInputChange("salaryMax", e.target.value)}
+                      className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                     />
                   </div>
                 </div>

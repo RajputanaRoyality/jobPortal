@@ -182,7 +182,7 @@ const SignUp = () => {
           </h2>
 
           <p className="text-gray-600 mb-4">
-            Welcome to Vaiso Portal! Your account has been successfully created.
+            Welcome to SamridhiHr Portal! Your account has been successfully created.
           </p>
 
           <div className="animate-spin w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto" />

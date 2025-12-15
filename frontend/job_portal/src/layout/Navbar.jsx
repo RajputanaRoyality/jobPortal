@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import { Briefcase, Bookmark } from "lucide-react";
+import {  Bookmark } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
+import logo from "../assets/logo.png"
+
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
@@ -26,10 +28,13 @@ const Navbar = () => {
             <div className="flex items-center justify-between h-16">
                 {/*Logo*/}
                 <Link to="/find-jobs" className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                        <Briefcase className="w-5 h-5 text-white" />
+                    <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}>
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="w-50 h-15 object-cover rounded-md"  // Adjust size as needed
+                        />
                     </div>
-                    <span className="text-lg font-bold text-gray-900">JobPortal</span>
                 </Link>
 
                 {/*Auth Buttons*/}
